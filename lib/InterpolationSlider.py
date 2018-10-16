@@ -97,6 +97,27 @@ class InterpolationPreviewWindow(object):
         # Collect info on all open fonts
         self.fonts = AllFonts()
         self.fontNames = []
+
+        if len(self.fonts) < 2:
+            self.processOneFont()
+        else:
+            self.processTwoFonts(font0name, font1name)
+
+    def processOneFont(self):
+        font = self.fonts[0]
+
+        layer0 = font.layers[0]
+        layer1 = font.layers[1]
+
+        layerNames = []
+        for layer in font.layers:
+            layerNames.append(layer.name)
+
+        self.w.font0.setItems(layerNames)
+        self.w.font1.setItems(layerNames)
+
+
+    def processTwoFonts(self, font0name, font1name):
         for font in self.fonts:
             self.fontNames.append(self.getFontName(font, self.fontNames))
         # Update the popUpButtons
@@ -143,7 +164,7 @@ class InterpolationPreviewWindow(object):
             master0idx = self.w.font0.get()
             master1idx = self.w.font1.get()
             master0 = self.fonts[master0idx]
-            master1 = self.fonts[master1idx]
+            master1 = self.fonts[0]
             if glyphName in master0:
                 self.glyph0 = master0[glyphName]
             if glyphName in master1:
