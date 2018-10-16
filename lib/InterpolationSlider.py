@@ -116,6 +116,9 @@ class InterpolationPreviewWindow(object):
         self.w.font0.setItems(layerNames)
         self.w.font1.setItems(layerNames)
 
+        self.w.font0.set(0)
+        self.w.font0.set(1)
+
 
     def processTwoFonts(self, font0name, font1name):
         for font in self.fonts:
@@ -159,16 +162,19 @@ class InterpolationPreviewWindow(object):
             self.currentGlyph.addObserver(self, "optionsChanged", "Glyph.Changed")
             self.currentGlyph.addObserver(self, "optionsChanged", "Glyph.ContoursChanged")
         if self.currentGlyph:
-            # Update the glyph info
-            glyphName = self.currentGlyph.name
-            master0idx = self.w.font0.get()
-            master1idx = self.w.font1.get()
-            master0 = self.fonts[master0idx]
-            master1 = self.fonts[0]
-            if glyphName in master0:
-                self.glyph0 = master0[glyphName]
-            if glyphName in master1:
-                self.glyph1 = master1[glyphName]
+            if len(self.fonts) < 2:
+                self.glyphChangedSingle()
+            else:
+                # Update the glyph info
+                glyphName = self.currentGlyph.name
+                master0idx = self.w.font0.get()
+                master1idx = self.w.font1.get()
+                master0 = self.fonts[master0idx]
+                master1 = self.fonts[master1idx]
+                if glyphName in master0:
+                    self.glyph0 = master0[glyphName]
+                if glyphName in master1:
+                    self.glyph1 = master1[glyphName]
         # Update the interp compatibility report
         self.testCompatibility()
         # Adjust the frame of the window to fit the interpolation
@@ -191,7 +197,12 @@ class InterpolationPreviewWindow(object):
         # Update the view
         self.optionsChanged(None)
         
-    
+    def glyphChangedSingle(self):
+        self.glyph0 = self.currentGlyph
+        if len(self.glyph0.layers) > 1:
+            self.glyph1 = RGlyph()
+            self.glyph1.copyData(self.glyph0.layers[1])
+
     def testCompatibility(self):
         status = u"⚪️"
         if self.window:
