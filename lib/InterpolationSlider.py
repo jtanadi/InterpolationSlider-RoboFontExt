@@ -13,7 +13,7 @@ by Andy Clymer, June 2018
 """
 
 class InterpolationPreviewWindow(object):
-    
+    print("test")
     def __init__(self):
         
         self.currentGlyph = None
